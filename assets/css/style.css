@@ -1,0 +1,121 @@
+:root {
+    --purple-background-color: #a75aee; 
+    --light-purple-background-color: #e4b7e5
+    ;
+}
+
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+header {
+    display: flexbox;
+}
+
+.top-row-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.view-highscores {
+    color: var(--purple-background-color);
+}
+
+.heading-intro-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heading-intro-container p {
+    width: 75%;
+    text-wrap: wrap;
+}
+
+.heading-intro-container button {
+    background-color: var(--purple-background-color);
+    color: white;
+    border-radius: 12px;
+}
+
+.question-answer-container,
+.results-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.answer-choices {
+    padding-left: 0px; /* Removed padding on the left-side of the list element since it was indented by default */
+}
+
+.answer-choices p {
+    background-color: var(--purple-background-color);
+    color: white;
+    border-radius: 12px;
+    padding: 10px; /* Adds some purple spacing around the answer choice text to accommodate rounded corners */
+    margin-bottom: 20px;
+}
+
+.answer-choices p:hover {
+    filter: brightness(120%); /* Added to provide a visual cue to the user about their current selection */
+}
+
+.results-container form {
+    display: flex;
+    align-items: center; /* Places the text box and submit button with equal height */
+}
+
+.submit-initials-button {
+    margin-left: 5px; /* Creates a bit of separation between the button and text box */
+    background-color: var(--purple-background-color);
+    color: white;
+    border-radius: 12px;
+}
+
+.highscores-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.highscores-container ol {
+    padding-left: 0;
+    align-items: center;
+}
+
+.highscores-container ol li {
+    background-color: var(--light-purple-background-color);
+    padding: 5px;
+    margin: 10px;
+}
+
+/*  Wanted to include the number assigned to each element, which DevTools calls the marker but this did not function at this time 
+.highscores-container ol li::marker {
+    background-color: var(--light-purple-background-color);
+} */
+
+.highscore-buttons {
+    display:flex;
+    align-items: center;
+}
+
+.go-back-button,
+.clear-highscores-button {
+    background-color: var(--purple-background-color);
+    color: white;
+    border-radius: 12px;
+}
+
+/* Adds a brightness filter to each button of the webpage*/
+.start-button:hover,
+.submit-initials-button:hover, 
+.go-back-button:hover,
+.clear-highscores-button:hover {
+    filter: brightness(120%);
+}
