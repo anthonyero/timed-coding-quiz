@@ -15,7 +15,6 @@ var answerChoiceDEl = document.getElementById("answer-choice-d");
 
 
 
-
 var isCorrect = false;
 var timer;
 var timerCount;
@@ -82,6 +81,12 @@ const questionBank = [
 
 // Button eventListeners
 startButton.addEventListener("click", startGame)
+    // Moved to the global variable and outside of a function to prevent eventListeners from being added each playthrough
+answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; checkResponse()});
+answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
+answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; checkResponse()});
+answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
+    
 
 
 // Function definitions
@@ -95,6 +100,7 @@ function startGame () {
     headingIntroContainer.setAttribute("style", "display:none;")
     questionAnswerContainer.removeAttribute("style", "display: none;");
     // ADD: DISABLE THE VIEW HIGHSCORES BUTTON TO PREVENT A MISMATCH OF DISPLAY:NONES highScoresButton.disabled = true; 
+    
     renderQuestions();
     // startTimer();
 }
@@ -129,13 +135,9 @@ function renderQuestions () {
     function writeInsertQuestions (currentQuestion) {
         questionEl.textContent = questionBank[currentQuestion]["question"];
         answerChoiceAEl.textContent = questionBank[currentQuestion]["answerChoices"]["a"]; // Struggled using querySelector and class. Changed to ID and worked 
-        answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; checkResponse()});
         answerChoiceBEl.textContent = questionBank[currentQuestion]["answerChoices"]["b"];
-        answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
         answerChoiceCEl.textContent = questionBank[currentQuestion]["answerChoices"]["c"];
-        answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; checkResponse()});
         answerChoiceDEl.textContent = questionBank[currentQuestion]["answerChoices"]["d"];
-        answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
     }
 
     /* This loop would immediately iterate through all of the questions without awaiting a user's response. Remedied by using the Switch statement above*/
