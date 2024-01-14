@@ -51,10 +51,12 @@ header {
 }
 
 .answer-choices {
+    display: flex;
+    flex-direction: column;
     padding-left: 0px; /* Removed padding on the left-side of the list element since it was indented by default */
 }
 
-.answer-choices p {
+.answer-choices button {
     background-color: var(--purple-background-color);
     color: white;
     border-radius: 12px;
@@ -62,7 +64,7 @@ header {
     margin-bottom: 20px;
 }
 
-.answer-choices p:hover {
+.answer-choices button:hover {
     filter: brightness(120%); /* Added to provide a visual cue to the user about their current selection */
 }
 

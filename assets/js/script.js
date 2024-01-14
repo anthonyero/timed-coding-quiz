@@ -5,11 +5,24 @@ var resultsContainer = document.querySelector(".results-container");
 var highscoresContainer = document.querySelector(".highscores-container");
 var timerElement = document.querySelector(".timer-count");
 var startButton = document.querySelector(".start-button");
-var highScores
+var highScoresButton = document.querySelector(".view-highscores");
+var questionEl = document.querySelector(".question");
+var answerChoicesContainer = document.querySelector(".answer-choices");
+var answerChoiceAEl = document.getElementById("answer-choice-a");
+var answerChoiceBEl = document.getElementById("answer-choice-b");
+var answerChoiceCEl = document.getElementById("answer-choice-c");
+var answerChoiceDEl = document.getElementById("answer-choice-d");
+
+
 
 var isCorrect = false;
 var timer;
 var timerCount;
+var selectedAnswer;
+var currentQuestion = 0;
+
+var timerTest = 60 //FOR TESTING PURPOSES 
+
 
     // Question Bank: An array of question objects
 
@@ -66,12 +79,106 @@ const questionBank = [
     }
 ]
 
+// Button eventListeners
+startButton.addEventListener("click", startGame)
+    // Moved to the global variable and outside of a function to prevent eventListeners from being added each playthrough
+answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; checkResponse()});
+answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
+answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; checkResponse()});
+answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
+    
+
+
 // Function definitions
 function init () {
     questionAnswerContainer.setAttribute("style", "display: none;");
     resultsContainer.setAttribute("style", "display: none;");
     highscoresContainer.setAttribute("style", "display: none");
 }
+
+function startGame () {
+    headingIntroContainer.setAttribute("style", "display:none;")
+    questionAnswerContainer.removeAttribute("style", "display: none;");
+    // ADD: DISABLE THE VIEW HIGHSCORES BUTTON TO PREVENT A MISMATCH OF DISPLAY:NONES highScoresButton.disabled = true; 
+    
+    renderQuestions();
+    // startTimer();
+}
+
+function renderQuestions () {
+    // ADD: A LOOP OR OTHER WAY TO ITERATE OVER THE LENGTH OF THE questionBank array
+    // ADD a condition that time > 0 otherwise exit this function and run a gameEnd() function
+    switch(currentQuestion) {
+        case 0: 
+            writeInsertQuestions(0);
+            break;
+        case 1:
+            writeInsertQuestions(1);
+            break;
+        case 2:
+            writeInsertQuestions(2);
+            break;
+        case 3:
+            writeInsertQuestions(3);
+            break;
+        case 4:
+            writeInsertQuestions(4);
+            break;
+        default:
+            window.alert("Those were all of the questions!")
+            // call gameEnd function
+
+
+
+    }
+
+    function writeInsertQuestions (currentQuestion) {
+        questionEl.textContent = questionBank[currentQuestion]["question"];
+        answerChoiceAEl.textContent = questionBank[currentQuestion]["answerChoices"]["a"]; // Struggled using querySelector and class. Changed to ID and worked 
+        answerChoiceBEl.textContent = questionBank[currentQuestion]["answerChoices"]["b"];
+        answerChoiceCEl.textContent = questionBank[currentQuestion]["answerChoices"]["c"];
+        answerChoiceDEl.textContent = questionBank[currentQuestion]["answerChoices"]["d"];
+    }
+
+    /* This loop would immediately iterate through all of the questions without awaiting a user's response. Remedied by using the Switch statement above*/
+    /*for (var i = 0; i < questionBank.length; i++) {
+        questionEl.textContent = questionBank[i]["question"];
+        answerChoiceAEl.textContent = questionBank[i]["answerChoices"]["a"]; // Struggled using querySelector and class. Changed to ID and worked 
+        answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; checkResponse()});
+        answerChoiceBEl.textContent = questionBank[i]["answerChoices"]["b"];
+        answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
+        answerChoiceCEl.textContent = questionBank[i]["answerChoices"]["c"];
+        answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; checkResponse()});
+        answerChoiceDEl.textContent = questionBank[i]["answerChoices"]["d"];
+        answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
+    }*/
+    
+    
+}
+
+
+
+function checkResponse() {
+    console.log(selectedAnswer)
+    if (selectedAnswer === questionBank[currentQuestion]["correctAnswer"]) {
+        // answer-choice-[selectedAnswer].setAttribute("style", "background-color: green;")
+        window.alert("Correct")
+        currentQuestion++;
+        renderQuestions();
+        
+    }
+    else {
+        // subtract 10 seconds from time
+        // Add red background-color styling to selected answer
+        timerTest = timerTest - 10; // BUG when selecting answer for questions 2-5 receive multiple inputs causing score to deplete rapidly
+                                    // It may be registering multiple clicks? A clue is that sometimes it will 
+                                    // give multiple alerts. Some "correct" then "incorrect" after the same button press
+        window.alert("Incorrect. time left: " + timerTest);
+        currentQuestion++;
+        renderQuestions();
+    }
+}
+
 
 init();
 
