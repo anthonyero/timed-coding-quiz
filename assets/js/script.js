@@ -21,8 +21,6 @@ var timerCount;
 var selectedAnswer;
 var currentQuestion = 0;
 
-var timerTest = 60 //FOR TESTING PURPOSES 
-
 
     // Question Bank: An array of question objects
 
@@ -100,9 +98,9 @@ function startGame () {
     headingIntroContainer.setAttribute("style", "display:none;")
     questionAnswerContainer.removeAttribute("style", "display: none;");
     // ADD: DISABLE THE VIEW HIGHSCORES BUTTON TO PREVENT A MISMATCH OF DISPLAY:NONES highScoresButton.disabled = true; 
-    
+    timerCount = 60;
     renderQuestions();
-    // startTimer();
+    startTimer();
 }
 
 function renderQuestions () {
@@ -125,12 +123,12 @@ function renderQuestions () {
             writeInsertQuestions(4);
             break;
         default:
-            window.alert("Those were all of the questions!")
+           // window.alert("Those were all of the questions!")
             // call gameEnd function
 
-
-
     }
+
+
 
     function writeInsertQuestions (currentQuestion) {
         questionEl.textContent = questionBank[currentQuestion]["question"];
@@ -156,26 +154,49 @@ function renderQuestions () {
     
 }
 
+function startTimer () {
+    timer = setInterval(function() {
+        timerCount--;
+        timerElement.textContent = "Time: " + timerCount;
+        if ((currentQuestion === questionBank.length) && timerCount > 0) { // Set currentQuestion === length due to zero-based numbering. If the condition is currentQuestion > length, won't function as intended because currentQuestion makes at 4, not 5
+            clearInterval(timer);
+            timerElement.textContent = "Time: " + timerCount;
+            window.alert("You answered all of the questions with time to spare")
+            // Run endGame function
+        }
+        
+
+        if (timerCount <= 0) {
+            clearInterval(timer);
+            if (timerCount < 0) { // Can receive a negative score if a question is answered incorrectly with fewer than 10 seconds remaining. When this happens, set timerCount = 0
+                timerCount = 0;
+            }
+            // Run endGame function
+            timerElement.textContent = "Time: " + timerCount;
+            window.alert("You ran out of time!");
+        }
+    }, 1000);
+}
 
 
 function checkResponse() {
     console.log(selectedAnswer)
     if (selectedAnswer === questionBank[currentQuestion]["correctAnswer"]) {
         // answer-choice-[selectedAnswer].setAttribute("style", "background-color: green;")
-        window.alert("Correct")
+        // window.alert("Correct")
         currentQuestion++;
         renderQuestions();
         
     }
     else {
-        // subtract 10 seconds from time
-        // Add red background-color styling to selected answer
-        timerTest = timerTest - 10; // BUG when selecting answer for questions 2-5 receive multiple inputs causing score to deplete rapidly
-                                    // It may be registering multiple clicks? A clue is that sometimes it will 
-                                    // give multiple alerts. Some "correct" then "incorrect" after the same button press
-        window.alert("Incorrect. time left: " + timerTest);
         currentQuestion++;
         renderQuestions();
+        // subtract 10 seconds from time
+        // Add red background-color styling to selected answer
+        timerCount = timerCount - 10; 
+        timerElement.textContent = "Time: " + timerCount; // Added to immediately apply 10 second penalty to the webpage's timer
+        // window.alert("Incorrect. time left: " + timerCount);
+        
     }
 }
 
