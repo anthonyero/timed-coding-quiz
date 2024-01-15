@@ -12,6 +12,9 @@ var answerChoiceAEl = document.getElementById("answer-choice-a");
 var answerChoiceBEl = document.getElementById("answer-choice-b");
 var answerChoiceCEl = document.getElementById("answer-choice-c");
 var answerChoiceDEl = document.getElementById("answer-choice-d");
+var finalScoreElement = document.querySelector(".final-score");
+var userInitialsElement = document.getElementById("initials")
+var submitInitialsButton = document.querySelector(".submit-initials-button");
 
 
 
@@ -20,6 +23,8 @@ var timer;
 var timerCount;
 var selectedAnswer;
 var currentQuestion = 0;
+var userInitials;
+var leaderboard = [];
 
 
     // Question Bank: An array of question objects
@@ -84,14 +89,15 @@ answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; check
 answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
 answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; checkResponse()});
 answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
-    
+    // submitInitials Button
+submitInitialsButton.addEventListener("click", recordInitials); // Added recordInitials as a callback because as a function it immediately launched before an individual submitted 
 
 
 // Function definitions
 function init () {
     questionAnswerContainer.setAttribute("style", "display: none;");
     resultsContainer.setAttribute("style", "display: none;");
-    highscoresContainer.setAttribute("style", "display: none");
+    highscoresContainer.setAttribute("style", "display: none;");
 }
 
 function startGame () {
@@ -123,8 +129,7 @@ function renderQuestions () {
             writeInsertQuestions(4);
             break;
         default:
-           // window.alert("Those were all of the questions!")
-            // call gameEnd function
+            endGame();
 
     }
 
@@ -161,8 +166,7 @@ function startTimer () {
         if ((currentQuestion === questionBank.length) && timerCount > 0) { // Set currentQuestion === length due to zero-based numbering. If the condition is currentQuestion > length, won't function as intended because currentQuestion makes at 4, not 5
             clearInterval(timer);
             timerElement.textContent = "Time: " + timerCount;
-            window.alert("You answered all of the questions with time to spare")
-            // Run endGame function
+            endGame();
         }
         
 
@@ -171,9 +175,8 @@ function startTimer () {
             if (timerCount < 0) { // Can receive a negative score if a question is answered incorrectly with fewer than 10 seconds remaining. When this happens, set timerCount = 0
                 timerCount = 0;
             }
-            // Run endGame function
             timerElement.textContent = "Time: " + timerCount;
-            window.alert("You ran out of time!");
+            endGame();
         }
     }, 1000);
 }
@@ -198,6 +201,34 @@ function checkResponse() {
         // window.alert("Incorrect. time left: " + timerCount);
         
     }
+}
+
+function endGame () {
+    questionAnswerContainer.setAttribute("style", "display: none;");
+    resultsContainer.removeAttribute("style", "display: none;");
+    finalScoreElement.textContent = "Your final score is " + timerCount + ".";
+}
+
+function recordInitials (event) { // Added for callback
+    event.preventDefault(); // Added preventDefault to stop the form from refreshing to init()
+    userInitials = userInitialsElement.value
+    window.alert("userInitials: " + userInitials);
+
+    /*var currentUserInfoObject = function (userInitials, timerCount) {
+        var tempObject = {initials: userInitials,
+        score: timerCount}
+        return tempObject
+    } */
+
+    var currentUserInfoObject = {
+        initials: userInitials,
+        score: timerCount}
+
+    leaderboard.push(currentUserInfoObject)
+
+    // STORAGE NOT SAVING BETWEEN REFRESHES WHICH IS AN ISSUE
+    // Would like to store an array of objects that are sorted by their "score" property
+    localStorage.setItem("localLeaderboard", leaderboard);
 }
 
 
