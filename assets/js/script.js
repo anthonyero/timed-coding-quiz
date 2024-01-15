@@ -23,8 +23,8 @@ var timer;
 var timerCount;
 var selectedAnswer;
 var currentQuestion = 0;
-var userInitials;
-var leaderboard = [];
+//var userInitials;
+//var leaderboard = [];
 
 
     // Question Bank: An array of question objects
@@ -212,23 +212,31 @@ function endGame () {
 function recordInitials (event) { // Added for callback
     event.preventDefault(); // Added preventDefault to stop the form from refreshing to init()
     userInitials = userInitialsElement.value
-    window.alert("userInitials: " + userInitials);
+    userInitials = userInitials.toUpperCase();
 
     /*var currentUserInfoObject = function (userInitials, timerCount) {
         var tempObject = {initials: userInitials,
         score: timerCount}
         return tempObject
     } */
-
+    
     var currentUserInfoObject = {
         initials: userInitials,
         score: timerCount}
 
-    leaderboard.push(currentUserInfoObject)
+    
+    // Check if a list for locally stored leaderboards exist. If not, create a an empty string object, else retrieve
+    if (localStorage.getItem("leaderBoardArray") === null) {
+        localStorage.setItem("leaderBoardArray", JSON.stringify([]));
+    }
+    // Retrieve locally stored leaderboard and append new userInfo to it
+    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderBoardArray")); // Retrieve and convert string back to an array
+    currentLeaderboard.push(currentUserInfoObject); // Append the latest currentUserInfo object object 
+    currentLeaderboard = currentLeaderboard.sort(function(a, b){return b.score - a.score}); // This was detailed in the W3 schools JS Array Sort page
+    // Save array turned in to a JavaScript object string
+    localStorage.setItem("leaderBoardArray", JSON.stringify(currentLeaderboard));
 
-    // STORAGE NOT SAVING BETWEEN REFRESHES WHICH IS AN ISSUE
-    // Would like to store an array of objects that are sorted by their "score" property
-    localStorage.setItem("localLeaderboard", leaderboard);
+    // Run a viewRenderHighscores function
 }
 
 
@@ -259,3 +267,4 @@ init();
         - else
             - present the results-container with a form that allows users to submit their score to the leaderboard
 */
+
