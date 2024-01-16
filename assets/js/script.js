@@ -17,6 +17,7 @@ var answerChoiceDEl = document.getElementById("answer-choice-d");
 var finalScoreElement = document.querySelector(".final-score");
 var userInitialsElement = document.getElementById("initials")
 var submitInitialsButton = document.querySelector(".submit-initials-button");
+var goBackButton = document.querySelector(".go-back-button");
 
 
 
@@ -93,7 +94,7 @@ answerChoiceCEl.addEventListener("click", function(){selectedAnswer = "c"; check
 answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; checkResponse()});
     // submitInitials Button
 submitInitialsButton.addEventListener("click", recordInitials); // Added recordInitials as a callback because as a function it immediately launched before an individual submitted 
-
+goBackButton.addEventListener("click", goBack)
 
 // Function definitions
 function init () {
@@ -107,6 +108,10 @@ function startGame () {
     questionAnswerContainer.removeAttribute("style", "display: none;");
     // ADD: DISABLE THE VIEW HIGHSCORES BUTTON TO PREVENT A MISMATCH OF DISPLAY:NONES highScoresButton.disabled = true; 
     timerCount = 60;
+    
+    // FOR REPLAY PURPOSES AFTER COMPLETING ONE ROUND
+    currentQuestion = 0; // Added because without it the question count exceeds the switch statement so the game ends immediately
+    
     renderQuestions();
     startTimer();
 }
@@ -228,26 +233,30 @@ function recordInitials (event) { // Added for callback
 
     
     // Check if a list for locally stored leaderboards exist. If not, create a an empty string object, else retrieve
-    if (localStorage.getItem("leaderBoardArray") === null) {
-        localStorage.setItem("leaderBoardArray", JSON.stringify([]));
+    if (localStorage.getItem("leaderboardArray") === null) {
+        localStorage.setItem("leaderboardArray", JSON.stringify([]));
     }
     // Retrieve locally stored leaderboard and append new userInfo to it
-    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderBoardArray")); // Retrieve and convert string back to an array
+    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderboardArray")); // Retrieve and convert string back to an array
     currentLeaderboard.push(currentUserInfoObject); // Append the latest currentUserInfo object object 
     currentLeaderboard = currentLeaderboard.sort(function(a, b){return b.score - a.score}); // This was detailed in the W3 schools JS Array Sort page
     // Save array turned in to a JavaScript object string
-    localStorage.setItem("leaderBoardArray", JSON.stringify(currentLeaderboard));
+    localStorage.setItem("leaderboardArray", JSON.stringify(currentLeaderboard));
 
     viewRenderHighscores();
 }
 
 function viewRenderHighscores () {
-    // Ensure only relevant sectinos are displayed
+    clearInterval(timer); // Added here because if a user selected "View Highscores" while the game was running and then selected "Go back", the timer would continue to run because the clearInterval conditions were not fulfilled"
+    // Ensure only relevant sections are displayed
     if (topRowContainer.hasAttribute("style", "display: none;") === false) {
         topRowContainer.setAttribute("style", "display: none;");
     }
     if (headingIntroContainer.hasAttribute("style", "display: none;") === false) {
         headingIntroContainer.setAttribute("style", "display: none;");
+    }
+    if (questionAnswerContainer.hasAttribute("style", "display: none;") === false) {
+        questionAnswerContainer.setAttribute("style", "display: none;");
     }
     if (resultsContainer.hasAttribute("style", "display: none;") === false) {
         resultsContainer.setAttribute("style", "display: none;");
@@ -256,8 +265,18 @@ function viewRenderHighscores () {
         highscoresContainer.removeAttribute("style", "display: none;");
     }
 
+
+
     // Create list element and append
-    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderBoardArray"));
+    // Due to utilizing append, whenever viewRenderHighscores () is called, it'll add the list elements again so we will conclude with duplicated list
+    // Local storage is unaffected, but the user is presented incorrect information
+    // To remedy, I will delete all child elements from the highScoresListContainer each time the function is invoked
+    // and have it compile the list elements from scratch each time
+    while (highScoresListContainer.hasChildNodes()) {
+        highScoresListContainer.removeChild(highScoresListContainer.firstChild) // As long as the list container has child elements, it will delete the first. This repeats until the list container doesn't have any child elements
+    }
+
+    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderboardArray"));
     for (var i = 0; i < currentLeaderboard.length; i++) {
         var rowInitials = currentLeaderboard[i]["initials"];
         var rowScore = currentLeaderboard[i]["score"];
@@ -271,6 +290,18 @@ function viewRenderHighscores () {
     }
 }
 
+function goBack () {
+    if (topRowContainer.hasAttribute("style", "display: none;")) {
+        topRowContainer.removeAttribute("style", "display: none;");
+    }
+    if (headingIntroContainer.hasAttribute("style", "display: none;")) {
+        headingIntroContainer.removeAttribute("style", "display: none;");
+    }
+    resultsContainer.setAttribute("style", "display: none;");
+    highscoresContainer.setAttribute("style", "display: none;");
+
+    init();
+}
 
 init();
 
