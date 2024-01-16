@@ -18,6 +18,7 @@ var finalScoreElement = document.querySelector(".final-score");
 var userInitialsElement = document.getElementById("initials")
 var submitInitialsButton = document.querySelector(".submit-initials-button");
 var goBackButton = document.querySelector(".go-back-button");
+var clearHighscoresButton = document.querySelector(".clear-highscores-button");
 
 
 
@@ -95,6 +96,7 @@ answerChoiceDEl.addEventListener("click", function(){selectedAnswer = "d"; check
     // submitInitials Button
 submitInitialsButton.addEventListener("click", recordInitials); // Added recordInitials as a callback because as a function it immediately launched before an individual submitted 
 goBackButton.addEventListener("click", goBack)
+clearHighscoresButton.addEventListener("click", clearHighscores);
 
 // Function definitions
 function init () {
@@ -302,6 +304,12 @@ function goBack () {
 
     init();
 }
+
+function clearHighscores() {
+    localStorage.clear("leaderboardArray");
+    viewRenderHighscores(); // Called to update the view the new, empty highscores page
+}
+
 
 init();
 
