@@ -1,8 +1,10 @@
 // Global Variable definitions
+var topRowContainer = document.querySelector(".top-row-container");
 var headingIntroContainer = document.querySelector(".heading-intro-container");
 var questionAnswerContainer = document.querySelector(".question-answer-container");
 var resultsContainer = document.querySelector(".results-container");
 var highscoresContainer = document.querySelector(".highscores-container");
+var highScoresListContainer = document.querySelector(".highscores-list");
 var timerElement = document.querySelector(".timer-count");
 var startButton = document.querySelector(".start-button");
 var highScoresButton = document.querySelector(".view-highscores");
@@ -18,7 +20,6 @@ var submitInitialsButton = document.querySelector(".submit-initials-button");
 
 
 
-var isCorrect = false;
 var timer;
 var timerCount;
 var selectedAnswer;
@@ -83,7 +84,8 @@ const questionBank = [
 ]
 
 // Button eventListeners
-startButton.addEventListener("click", startGame)
+startButton.addEventListener("click", startGame);
+highScoresButton.addEventListener("click", viewRenderHighscores);
     // Moved to the global variable and outside of a function to prevent eventListeners from being added each playthrough
 answerChoiceAEl.addEventListener("click", function(){selectedAnswer = "a"; checkResponse()});
 answerChoiceBEl.addEventListener("click", function(){selectedAnswer = "b"; checkResponse()});
@@ -236,7 +238,37 @@ function recordInitials (event) { // Added for callback
     // Save array turned in to a JavaScript object string
     localStorage.setItem("leaderBoardArray", JSON.stringify(currentLeaderboard));
 
-    // Run a viewRenderHighscores function
+    viewRenderHighscores();
+}
+
+function viewRenderHighscores () {
+    // Ensure only relevant sectinos are displayed
+    if (topRowContainer.hasAttribute("style", "display: none;") === false) {
+        topRowContainer.setAttribute("style", "display: none;");
+    }
+    if (headingIntroContainer.hasAttribute("style", "display: none;") === false) {
+        headingIntroContainer.setAttribute("style", "display: none;");
+    }
+    if (resultsContainer.hasAttribute("style", "display: none;") === false) {
+        resultsContainer.setAttribute("style", "display: none;");
+    }
+    if (highscoresContainer.hasAttribute("style", "display: none;")) {
+        highscoresContainer.removeAttribute("style", "display: none;");
+    }
+
+    // Create list element and append
+    var currentLeaderboard = JSON.parse(localStorage.getItem("leaderBoardArray"));
+    for (var i = 0; i < currentLeaderboard.length; i++) {
+        var rowInitials = currentLeaderboard[i]["initials"];
+        var rowScore = currentLeaderboard[i]["score"];
+
+        var rowListElement = document.createElement("li");
+        rowListElement.textContent = rowInitials + ": " + rowScore
+        if (i % 2 === 0) {
+            rowListElement.setAttribute("style", "background-color: var(--light-purple-background-color);")
+        }
+        highScoresListContainer.appendChild(rowListElement)
+    }
 }
 
 

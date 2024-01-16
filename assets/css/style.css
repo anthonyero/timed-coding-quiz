@@ -23,7 +23,7 @@ header {
 }
 
 .view-highscores {
-    color: var(--purple-background-color);
+       color: var(--purple-background-color);
 }
 
 .heading-intro-container {
@@ -92,7 +92,7 @@ header {
 }
 
 .highscores-container ol li {
-    background-color: var(--light-purple-background-color);
+    /* background-color: var(--light-purple-background-color); Removed from here to implement through JavaScript */
     padding: 5px;
     margin: 10px;
 }
